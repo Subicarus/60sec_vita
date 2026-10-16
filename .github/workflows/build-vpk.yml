@@ -16,7 +16,7 @@ jobs:
         run: |
           export VITASDK=/usr/local/vitasdk
           export PATH=$VITASDK/bin:$PATH
-          vdpm sdl2
+          yes | vdpm sdl2
 
       - name: Build
         run: |
