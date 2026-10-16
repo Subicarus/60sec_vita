@@ -1,0 +1,11 @@
+# Desktop build for trying the port on a PC first (needs SDL2 dev package):
+#   make -f Makefile.pc && ./survive60      (run from this directory, assets/ must be next to it)
+# Keys: arrows/WASD move, Z dash, X plant light, C/Enter/Space accept, P pause, Esc quit
+CFLAGS  ?= -O2 -std=gnu11 -Wall $(shell sdl2-config --cflags)
+LDLIBS  ?= $(shell sdl2-config --libs) -lm
+survive60: src/main.c src/game.c src/game.h src/platform.h src/font_data.h
+	$(CC) $(CFLAGS) src/main.c src/game.c -o $@ $(LDLIBS)
+test: test/test_logic.c src/game.c
+	$(CC) -std=gnu11 -O1 -g -fsanitize=address,undefined -Wall -Wextra test/test_logic.c -o test/test_logic -lm && test/test_logic
+clean:
+	rm -f survive60 test/test_logic
