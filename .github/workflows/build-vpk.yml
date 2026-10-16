@@ -1,0 +1,40 @@
+name: Build VPK
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: vitasdk/vitasdk:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install SDL2 for Vita
+        run: |
+          export VITASDK=/usr/local/vitasdk
+          export PATH=$VITASDK/bin:$PATH
+          vdpm sdl2
+
+      - name: Build
+        run: |
+          export VITASDK=/usr/local/vitasdk
+          export PATH=$VITASDK/bin:$PATH
+          mkdir build && cd build
+          cmake ..
+          make 2>&1 | tee build.log
+
+      - name: Upload VPK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Survive60Seconds-vpk
+          path: build/Survive60Seconds.vpk
+
+      - name: Upload build log (если сборка упала)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build/build.log
